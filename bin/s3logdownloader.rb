@@ -1,29 +1,34 @@
 require 'rubygems'
-require 'aws/s3'
+require 'yaml'
+require 'aws-sdk'
 
+config_file = File.join(File.dirname(__FILE__),
+                        "config.yml")
 
-class Connect
-  def initialize
-    @access_key_id     = ENV['ACCESS_KEY_ID']
-    @secret_access_key = ENV['SECRET_ACCESS_KEY']
-  end
-  
-  def authenticate
-    if !(@access_key_id||@secret_access_key)
-      print "Please specify the following ENV variables:
-        ACCESS_KEY_ID
-        SECRET_ACCESS_KEY\n"
-      exit
-    else
-      get_sum = AWS::S3::Base.establish_connection!(
-        :access_key_id     => @access_key_id, 
-        :secret_access_key => @secret_access_key,
-        :use_ssl           => true
-      )
-    end
-  end
+unless File.exist?(config_file)
+  puts <<END
+    Put your credentials in config.yml as follows:
+
+    access_key_id: YOUR_ACCESS_KEY_ID
+    secret_access_key: YOUR_SECRET_ACCESS_KEY
+END
+  exit 1
 end
 
-#get_sum.connected?
-get_sum = Connect.new
-get_sum.authenticate
+config = YAML.load(File.read(config_file))
+
+unless config.kind_of?(Hash)
+  puts <<END
+  Your config.yml is formatted incorrectly.  Please use the following format:
+
+  access_key_id: YOUR_ACCESS_KEY_ID
+  secret_access_key: YOUR_SECRET_ACCESS_KEY
+END
+  exit 1
+end
+
+log_files = AWS::S3.new(config)
+
+log_files.buckets.each do |bucket|
+  puts bucket.name
+end
