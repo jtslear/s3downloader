@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'yaml'
 require 'aws-sdk'
 
 debug = true

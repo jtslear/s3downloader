@@ -21,4 +21,15 @@ Requirements
 Notes
 -----
 * This script will thus far only download based on the exact key name
- * If they key name consists of a directory, that directy needs to already exist!!!!
+ * If they key name consists of a directory, that directory needs to already exist!!!!
+
+Get Started
+-----------
+```
+git clone https://github.com/jtslear/s3logdownloader.git
+cd s3downloader
+bundle install
+mv config.yml_example config.yml
+vim config.yml
+ruby bin/s3downloader.rb <bucket_name>
+```
