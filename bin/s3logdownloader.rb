@@ -2,8 +2,10 @@ require 'rubygems'
 require 'yaml'
 require 'aws-sdk'
 
+debug = true
+
 config_file = File.join(File.dirname(__FILE__),
-                        "config.yml")
+                        "../config.yml")
 
 unless File.exist?(config_file)
   puts <<END
@@ -27,8 +29,32 @@ END
   exit 1
 end
 
-log_files = AWS::S3.new(config)
+aws_session = AWS::S3.new(config)
+bucket_objects = Hash.new
 
-log_files.buckets.each do |bucket|
-  puts bucket.name
+ARGV.each do |bucket_name|
+  available_bucket = aws_session.buckets[bucket_name]
+  if available_bucket.exists? then
+    available_bucket.objects.each do |bucket_item|
+      bucket_objects[bucket_item.key] = bucket_name
+    end
+  else
+    puts "#{bucket_name} does not exist."
+  end
 end
+
+if debug
+  bucket_objects.each do |key, value|
+    puts "#{key} is in bucket #{value}"
+  end
+end
+
+bucket_objects.each do |key,value|
+  obj = aws_session.buckets[value].objects[key]
+  File.open(key, 'wb') do |file|
+    obj.read do |chunk|
+      file.write(chunk)
+    end
+  end
+end
+
