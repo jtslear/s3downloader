@@ -31,7 +31,7 @@ end
 aws_session = AWS::S3.new(config)
 bucket_objects = Hash.new
 
-if !ARGV[1] then
+if !ARGV[0] then
   aws_session.buckets.each do |bucket|
     puts bucket.name
   end
