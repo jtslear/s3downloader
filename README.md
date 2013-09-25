@@ -6,7 +6,14 @@ This script will download all files in buckets that are specified
 Examples
 --------
 
-Downloads all files in the node0 bucket
+Without any arguments the script will list available buckets
+```
+ruby bin/s3downloader.rb
+node0
+node1
+node2
+```
+Download all files in the node0 bucket
 ```
 ruby bin/s3downloader.rb node0
 ```

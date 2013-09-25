@@ -31,6 +31,12 @@ end
 aws_session = AWS::S3.new(config)
 bucket_objects = Hash.new
 
+if !ARGV[1] then
+  aws_session.buckets.each do |bucket|
+    puts bucket.name
+  end
+  exit
+end
 ARGV.each do |bucket_name|
   available_bucket = aws_session.buckets[bucket_name]
   if available_bucket.exists? then
