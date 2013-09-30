@@ -48,13 +48,14 @@ ARGV.each do |bucket_name|
   end
 end
 
+dir_name = /(^.+\/)/.match(bucket_objects.keys.first).to_s
+if Dir.exists?(dir_name) then
+  puts "YAY"
+else
+  Dir.mkdir(dir_name)
+end
+
 if debug
-  dir_name = Dir.new(/(^.+\/)/.match(bucket_objects.keys.first).to_str)
-  if dir_name.exists?(dir_name) then
-    puts YAY
-  else
-    puts LAME
-  end
   bucket_objects.each do |key, value|
     puts "#{key} is in bucket #{value}"
   end
